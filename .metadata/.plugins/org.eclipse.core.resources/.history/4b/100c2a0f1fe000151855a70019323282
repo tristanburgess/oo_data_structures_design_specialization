@@ -1,0 +1,19 @@
+package module3;
+
+import processing.core.*;
+
+public class SunnyGUI extends PApplet {
+	private String URL = "https://processing.org/img/processing-web.png";
+	
+	public void setup()
+	{
+		size(200, 200);
+       background(loadImage(URL, "png"));
+	}
+	
+	public void draw()
+	{
+		
+	}
+
+}

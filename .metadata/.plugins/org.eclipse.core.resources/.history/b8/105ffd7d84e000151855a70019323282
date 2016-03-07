@@ -1,0 +1,28 @@
+/**
+ * 
+ */
+package classwork;
+
+import processing.core.PApplet;
+import processing.core.PImage;
+
+/**
+ * @author tristan.burgess
+ *
+ */
+public class SunnyGUI extends PApplet {
+	private String URL = "palmTrees.jpg";
+	private PImage backImg;
+	
+    public void setup() 
+    {
+    	backImg = loadImage(URL, "jpg");
+    	backImg.resize(0, height);
+    	image(backImg, 0, 0);
+    }
+    
+    public void draw()
+    {
+    	
+    }
+}

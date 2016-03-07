@@ -1,0 +1,11 @@
+package module3;
+
+import processing.core.PApplet;
+
+public class SunnyGUI extends PApplet {
+
+	public SunnyGUI() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

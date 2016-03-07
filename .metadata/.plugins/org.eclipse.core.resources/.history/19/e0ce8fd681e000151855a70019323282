@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package classwork;
+
+import processing.core.*;
+
+/**
+ * @author tristan.burgess
+ *
+ */
+public class SunnyGUI extends PApplet {
+
+}
