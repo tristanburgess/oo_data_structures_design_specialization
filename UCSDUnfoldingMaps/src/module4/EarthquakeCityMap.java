@@ -80,7 +80,7 @@ public class EarthquakeCityMap extends PApplet {
 		//earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
-		//earthquakesURL = "quiz1.atom";
+		earthquakesURL = "quiz1.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
@@ -126,7 +126,6 @@ public class EarthquakeCityMap extends PApplet {
 		background(0);
 		map.draw();
 		addKey();
-		
 	}
 	
 	// helper method to draw key in GUI
@@ -140,18 +139,36 @@ public class EarthquakeCityMap extends PApplet {
 		textAlign(LEFT, CENTER);
 		textSize(12);
 		text("Earthquake Key", 50, 75);
-		
-		fill(color(255, 0, 0));
-		ellipse(50, 125, 15, 15);
-		fill(color(255, 255, 0));
-		ellipse(50, 175, 10, 10);
-		fill(color(0, 0, 255));
-		ellipse(50, 225, 5, 5);
+
+		fill(255, 0, 0);
+		triangle(50, 105, 55, 95, 60, 105);
+		fill(255, 255, 255);
+		ellipse(55, 120, 10, 10);
+		rect(50, 135, 10, 10);
 		
 		fill(0, 0, 0);
-		text("5.0+ Magnitude", 75, 125);
-		text("4.0+ Magnitude", 75, 175);
-		text("Below 4.0", 75, 225);
+		text("City Marker", 65, 100);
+		text("Land Quake", 65, 120);
+		text("Ocean Quake", 65, 140);
+		
+		text("Size - Magnitude", 50, 165);
+		
+		fill(255, 255, 0);
+		ellipse(55, 190, 10, 10);
+		fill(0, 0, 255);
+		ellipse(55, 210, 10, 10);
+		fill(255, 0, 0);
+		ellipse(55, 230, 10, 10);
+		fill(255, 255, 255);
+		ellipse(55, 250, 10, 10);
+		line(55 - 5, 250 - 5, 55 + 5, 250 + 5);
+		line(55 + 5, 250 - 5, 55 - 5, 250 + 5);
+		
+		fill(0, 0, 0);
+		text("Shallow", 65, 190);
+		text("Intermediate", 65, 210);
+		text("Deep", 65, 230);
+		text("Past day", 65, 250);
 	}
 
 	
@@ -165,6 +182,11 @@ public class EarthquakeCityMap extends PApplet {
 		// IMPLEMENT THIS: loop over all countries to check if location is in any of them
 		
 		// TODO: Implement this method using the helper method isInCountry
+		for (Marker country : countryMarkers) {
+			if (isInCountry(earthquake, country)) {
+				return true;
+			}
+		}
 		
 		// not inside any country
 		return false;
@@ -178,7 +200,23 @@ public class EarthquakeCityMap extends PApplet {
 	// And LandQuakeMarkers have a "country" property set.
 	private void printQuakes() 
 	{
-		// TODO: Implement this method
+		for (Marker country : countryMarkers) {
+			int quakeCount = 0;
+			for (Marker quake : quakeMarkers) {
+				if (quake.getProperty("country") == country.getProperty("name")) {
+					quakeCount++;
+				}
+			}
+			println(country.getProperty("name"), ":", quakeCount);
+		}
+		
+		int oceanQuakeCount = 0;
+		for (Marker quake : quakeMarkers) {
+			if (quake instanceof OceanQuakeMarker) {
+				oceanQuakeCount++;
+			}
+		}
+		println("OCEAN QUAKES:", oceanQuakeCount);	
 	}
 	
 	

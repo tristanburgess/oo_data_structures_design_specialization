@@ -133,8 +133,7 @@ public class EarthquakeCityMap extends PApplet {
 		if (lastSelected != null) {
 			lastSelected.setSelected(false);
 			lastSelected = null;
-		
-		}
+		} 
 		selectMarkerIfHover(quakeMarkers);
 		selectMarkerIfHover(cityMarkers);
 	}
@@ -145,7 +144,19 @@ public class EarthquakeCityMap extends PApplet {
 	// 
 	private void selectMarkerIfHover(List<Marker> markers)
 	{
-		// TODO: Implement this method
+		if (lastSelected != null) {
+			return;
+		}
+		
+		for (Marker marker : markers)
+		{
+			CommonMarker cmMarker = (CommonMarker)marker;
+			if (cmMarker.isInside(map, mouseX, mouseY)) {
+				lastSelected = cmMarker;
+				cmMarker.setSelected(true);
+				return;
+			}
+		}
 	}
 	
 	/** The event handler for mouse clicks
@@ -156,19 +167,76 @@ public class EarthquakeCityMap extends PApplet {
 	@Override
 	public void mouseClicked()
 	{
-		// TODO: Implement this method
-		// Hint: You probably want a helper method or two to keep this code
-		// from getting too long/disorganized
+		if (lastClicked != null) {
+			lastClicked.setClicked(false);
+			lastClicked = null;
+			unhideMarkers();
+		} else {
+			if (findClickedMarker(quakeMarkers)) {
+				processClickedQuakeMarker();
+			} else if (findClickedMarker(cityMarkers)) {
+				processClickedCityMarker();
+			}
+		}
 	}
 	
+	// If there is a marker under the cursor, and lastSelected is null 
+	// set the lastSelected to be the first marker found under the cursor
+	// Make sure you do not select two markers.
+	// 
+	private boolean findClickedMarker(List<Marker> markers)
+	{
+		for (Marker marker : markers)
+		{
+			CommonMarker cmMarker = (CommonMarker)marker;
+			if (!cmMarker.isHidden() && cmMarker.isInside(map, mouseX, mouseY)) {
+				lastClicked = cmMarker;
+				cmMarker.setClicked(true);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private void processClickedQuakeMarker()
+	{
+		for (Marker marker : quakeMarkers) {
+			if (marker != lastClicked) {
+				marker.setHidden(true);
+			}
+		}
+		for (Marker marker : cityMarkers) {
+			CityMarker ctMarker = (CityMarker)marker;
+			EarthquakeMarker eqMarker = (EarthquakeMarker)lastClicked;
+			if (ctMarker.getDistanceTo(lastClicked.getLocation()) > eqMarker.threatCircle()){
+				marker.setHidden(true);
+			}
+		}
+	}
+	
+	private void processClickedCityMarker()
+	{
+		for (Marker marker : quakeMarkers) {
+			EarthquakeMarker eqMarker = (EarthquakeMarker)marker;
+			if (lastClicked.getDistanceTo(marker.getLocation()) > eqMarker.threatCircle()){
+				marker.setHidden(true);
+			}
+		}
+		for (Marker marker : cityMarkers) {
+			if (marker != lastClicked) {
+				marker.setHidden(true);
+			}
+		}
+	}
 	
 	// loop over and unhide all markers
 	private void unhideMarkers() {
-		for(Marker marker : quakeMarkers) {
+		for (Marker marker : quakeMarkers) {
 			marker.setHidden(false);
 		}
 			
-		for(Marker marker : cityMarkers) {
+		for (Marker marker : cityMarkers) {
 			marker.setHidden(false);
 		}
 	}
