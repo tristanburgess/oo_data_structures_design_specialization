@@ -409,5 +409,9 @@ public class EarthquakeCityMap extends PApplet {
 		}
 		return false;
 	}
+	
+	private void sortAndPrint(int numToPrint) {
+		
+	}
 
 }
