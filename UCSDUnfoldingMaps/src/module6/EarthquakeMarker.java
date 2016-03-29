@@ -179,6 +179,7 @@ public abstract class EarthquakeMarker extends CommonMarker implements Comparabl
 		return isOnLand;
 	}
 	
+<<<<<<< HEAD
 	public int compareTo(EarthquakeMarker that) {
 		float thisMag = this.getMagnitude();
 		float thatMag = that.getMagnitude();
@@ -187,6 +188,15 @@ public abstract class EarthquakeMarker extends CommonMarker implements Comparabl
 			return -1;
 		} else if (thisMag < thatMag) {
 			return 1;
+=======
+	public int compareTo(EarthquakeMarker mTo) {
+		float thisMag = this.getMagnitude(); 
+		float thatMag = mTo.getMagnitude();
+		if (thisMag > thatMag) {
+			return 1;
+		} else if (thisMag < thatMag) {
+			return -1;
+>>>>>>> origin/master
 		} else {
 			return 0;
 		}
