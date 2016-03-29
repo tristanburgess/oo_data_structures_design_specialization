@@ -85,7 +85,7 @@ public class EarthquakeCityMap extends PApplet {
 		//earthquakesURL = "test2.atom";
 		
 		// Uncomment this line to take the quiz
-		//earthquakesURL = "quiz2.atom";
+		earthquakesURL = "quiz2.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
@@ -124,7 +124,7 @@ public class EarthquakeCityMap extends PApplet {
 	    map.addMarkers(quakeMarkers);
 	    map.addMarkers(cityMarkers);
 	    
-	    
+	    sortAndPrint(20);
 	}  // End setup
 	
 	
@@ -409,5 +409,16 @@ public class EarthquakeCityMap extends PApplet {
 		}
 		return false;
 	}
-
+	
+	private void sortAndPrint(int numToPrint) {
+		Object[] quakes = quakeMarkers.toArray();
+		
+		java.util.Arrays.sort(quakes);
+		
+		System.out.println("\n---QUAKES IN DESC MAGNITUDE SORTED ORDER---");
+		for (int i = 0; i < numToPrint && i < quakes.length; ++i) {
+			EarthquakeMarker qm = (EarthquakeMarker)quakes[i];
+			System.out.println(qm.getTitle());
+		}
+	}
 }
