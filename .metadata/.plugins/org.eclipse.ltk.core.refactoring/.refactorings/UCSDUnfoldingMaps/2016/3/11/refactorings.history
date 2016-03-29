@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring accessors="true" comment="Delete element from project &apos;UCSDUnfoldingMaps&apos;&#x0D;&#x0A;- Original project: &apos;UCSDUnfoldingMaps&apos;&#x0D;&#x0A;- Original element: &apos;module3.EarthquakeMarkerStyle.java&apos;" description="Delete element" element1="/src&lt;module3{EarthquakeMarkerStyle.java" elements="1" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1457381684598" subPackages="false" version="1.0"/>
-</session>
