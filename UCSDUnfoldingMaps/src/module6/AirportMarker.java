@@ -1,10 +1,12 @@
 package module6;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import de.fhpotsdam.unfolding.data.Feature;
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.marker.SimpleLinesMarker;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 
 /** 
@@ -15,28 +17,78 @@ import processing.core.PGraphics;
  *
  */
 public class AirportMarker extends CommonMarker {
-	public static List<SimpleLinesMarker> routes;
+	public List<SimpleLinesMarker> routes;
 	
 	public AirportMarker(Feature city) {
 		super(((PointFeature)city).getLocation(), city.getProperties());
-	
+		routes = new ArrayList<SimpleLinesMarker>();
 	}
 	
 	@Override
 	public void drawMarker(PGraphics pg, float x, float y) {
-		pg.fill(11);
-		pg.ellipse(x, y, 5, 5);
+		int outRoutes = routes.size();
+		if (outRoutes < 10) {
+			pg.fill(204, 255, 255);
+			pg.stroke(204, 255, 255);
+		} else if (outRoutes > 30) {
+			pg.fill(0, 51, 51);
+			pg.stroke(0, 51, 51);
+		} else {
+			pg.fill(0, 153, 153);
+			pg.stroke(0, 153, 153);
+		}
+		pg.ellipse(x, y, radius, radius);
 		
 		
 	}
 
 	@Override
 	public void showTitle(PGraphics pg, float x, float y) {
-		 // show rectangle with title
+		// show rectangle with title
+		String title = getName() + " " + getCode() + " " + getCity() + " " + getCountry();
 		
-		// show routes
+		pg.pushStyle();
+		
+		pg.rectMode(PConstants.CORNER);
+		
+		pg.stroke(110);
+		pg.fill(255,255,255);
+		pg.rect(x, y + 15, pg.textWidth(title) +6, 18, 5);
+		
+		pg.textAlign(PConstants.LEFT, PConstants.TOP);
+		pg.fill(0);
+		pg.text(title, x + 3 , y +18);
 		
 		
+		pg.popStyle();
+		// show routes	
 	}
 	
+	public String toString() {
+		String title = getName() + " " + getCode() + " " + getCity() + " " + getCountry();
+		title = title + " Has " + routes.size() + " routes.";
+		return title;
+	}
+	
+	public void addRoute(SimpleLinesMarker sl) {
+		routes.add(sl);
+		this.setRadius(0.05f * routes.size());
+		System.out.println(routes.size());
+	}
+	
+	public String getName() {
+		return getProperty("name").toString();
+	}
+	
+	public String getCode() {
+		return getProperty("code").toString();
+	}
+	
+	public String getCity() {
+		return getProperty("city").toString();
+	}
+	
+	public String getCountry() {
+		return getProperty("country").toString();
+	}
 }

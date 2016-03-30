@@ -411,7 +411,6 @@ public class EarthquakeCityMap extends PApplet {
 	}
 	
 	private void sortAndPrint(int numToPrint) {
-<<<<<<< HEAD
 		Object[] quakes = quakeMarkers.toArray();
 		
 		java.util.Arrays.sort(quakes);
@@ -422,9 +421,4 @@ public class EarthquakeCityMap extends PApplet {
 			System.out.println(qm.getTitle());
 		}
 	}
-=======
-		
-	}
-
->>>>>>> origin/master
 }
