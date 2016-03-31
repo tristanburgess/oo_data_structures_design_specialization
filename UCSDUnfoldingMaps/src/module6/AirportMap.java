@@ -28,10 +28,12 @@ public class AirportMap extends PApplet {
 	UnfoldingMap map;
 	private List<Marker> airportList;
 	List<Marker> routeList;
-	private HashMap<Integer, AirportMarker> airportsRoutes;
+	private HashMap<Integer, AirportMarker> airportRoutes;
 	
 	private CommonMarker lastSelected;
-	private CommonMarker lastClicked;
+	private List<CommonMarker> lastClicked;
+	
+	private boolean showConnectionMarkers = false;
 	
 	public void setup() {
 		// setting up PAppler
@@ -47,7 +49,8 @@ public class AirportMap extends PApplet {
 		// list for markers, hashmap for quicker access when matching with routes
 		airportList = new ArrayList<Marker>();
 		HashMap<Integer, Location> airports = new HashMap<Integer, Location>();
-		airportsRoutes = new HashMap<Integer, AirportMarker>();
+		airportRoutes = new HashMap<Integer, AirportMarker>();
+		lastClicked = new ArrayList<CommonMarker>();
 		
 		// create markers from features
 		for(PointFeature feature : features) {
@@ -58,7 +61,7 @@ public class AirportMap extends PApplet {
 			
 			// put airport in hashmap with OpenFlights unique id for key
 			airports.put(Integer.parseInt(feature.getId()), feature.getLocation());
-			airportsRoutes.put(Integer.parseInt(feature.getId()), m);
+			airportRoutes.put(Integer.parseInt(feature.getId()), m);
 		
 		}
 		
@@ -79,7 +82,7 @@ public class AirportMap extends PApplet {
 			}
 			
 			List<Location> locs = route.getLocations();
-			double dist = locs.get(0).getDistance(locs.get(1)) * 1.52;
+			double dist = locs.get(0).getDistance(locs.get(1));
 			
 			SimpleLinesMarker sl = new SimpleLinesMarker(locs, route.getProperties());
 
@@ -97,9 +100,9 @@ public class AirportMap extends PApplet {
 			
 			sl.setHidden(true);
 			routeList.add(sl);
-			if (airportsRoutes.containsKey(source) && airportsRoutes.containsKey(dest)) {
-				airportsRoutes.get(source).addRoute(sl);
-				airportsRoutes.get(dest).addRoute(sl);
+			if (airportRoutes.containsKey(source) && airportRoutes.containsKey(dest)) {
+				airportRoutes.get(source).addRoute(sl);
+				airportRoutes.get(dest).addRoute(sl);
 			}
 			
 		}
@@ -155,14 +158,22 @@ public class AirportMap extends PApplet {
 	@Override
 	public void mouseClicked()
 	{
-		if (lastClicked != null) {
+		if (!lastClicked.isEmpty()) {
 			setInitialHiddenMarkers();
-			lastClicked = null;
+			lastClicked.clear();
 		}
-		else if (lastClicked == null) 
+		else
 		{
 			checkMarkersForClick();
 		}
+	}
+	
+	@Override
+	public void keyPressed()
+	{
+		if (key == 's') {
+			showConnectionMarkers = !showConnectionMarkers;
+		} 
 	}
 	
 	private void setInitialHiddenMarkers() {
@@ -176,16 +187,26 @@ public class AirportMap extends PApplet {
 	}
 	
 	private void checkMarkersForClick() {
-		if (lastClicked != null) return;
+		if (!lastClicked.isEmpty()) return;
 		//List<Marker> notHiddenAirportMarker = new ArrayList<Marker>();
 		for (Marker marker : airportList) {
 			if (!marker.isHidden() && marker.isInside(map, mouseX, mouseY)) {
-				lastClicked = (CommonMarker)marker;
-				for (Marker sl : ((AirportMarker)lastClicked).routes) {
+				lastClicked.add((CommonMarker)marker);
+				for (Marker sl : ((AirportMarker)lastClicked.get(0)).routes) {
+					if (showConnectionMarkers) {
+						int source = Integer.parseInt((String)sl.getProperty("source"));
+						int dest = Integer.parseInt((String)sl.getProperty("destination"));
+						lastClicked.add(airportRoutes.get(source));
+						lastClicked.add(airportRoutes.get(dest));
+					} 
+					
+					for (CommonMarker cmk : lastClicked) {
+						cmk.setHidden(false);
+					}
 					sl.setHidden(false);
 				}
 				for (Marker mk : airportList) {
-					if (mk != lastClicked) {
+					if (!lastClicked.contains(mk)) {
 						mk.setHidden(true);
 					}
 				}
@@ -195,50 +216,60 @@ public class AirportMap extends PApplet {
 	}
 	
 	// helper method to draw key in GUI
-		private void addKey() {	
-			fill(255, 250, 240);
-			
-			int xbase = 50;
-			int ybase = 50;
-			
-			rect(xbase, ybase, 250, 400);
-			
-			fill(0);
-			textAlign(LEFT, CENTER);
-			textSize(12);
-			text("Airport/Route Key", xbase+25, ybase+25);
-			
-			fill(color(255, 0, 255));
-			ellipse(xbase+35, ybase+50, 12, 12);
-			fill(color(0, 0, 255));
-			ellipse(xbase+35, ybase+70, 12, 12);
-			fill(color(255, 255, 0));
-			ellipse(xbase+35, ybase+90, 12, 12);
-			fill(color(255, 0, 0));
-			ellipse(xbase+35, ybase+110, 12, 12);
-			
-			textAlign(LEFT, CENTER);
-			fill(0, 0, 0);
-			text("routes = 0", xbase+50, ybase+50);
-			text("routes <= 100", xbase+50, ybase+70);
-			text("100 < routes <= 500", xbase+50, ybase+90);
-			text("routes > 500", xbase+50, ybase+110);
-			text("Size ~ Number of routes", xbase+25, ybase+130);
-			
-			text("Route distance (km)", xbase+25, ybase+170);
-			stroke(255, 0, 255);
-			line(xbase+15, ybase+190, xbase+45, ybase+190);
-			stroke(0, 0, 255);
-			line(xbase+15, ybase+210, xbase+45, ybase+210);
-			stroke(255, 255, 0);
-			line(xbase+15, ybase+230, xbase+45, ybase+230);
-			stroke(255, 0, 0);
-			line(xbase+15, ybase+250, xbase+45, ybase+250);
-			
-			text("distance <= 500km", xbase+50, ybase+190);
-			text("500km < distance <= 1000km", xbase+50, ybase+210);
-			text("1000km < distance <= 4000km", xbase+50, ybase+230);
-			text("distance > 4000km", xbase+50, ybase+250);
+	private void addKey() 
+	{	
+		fill(255, 250, 240);
+		
+		int xbase = 50;
+		int ybase = 50;
+		
+		rect(xbase, ybase, 250, 400);
+		
+		fill(0);
+		textAlign(LEFT, CENTER);
+		textSize(12);
+		text("Airport/Route Key", xbase+25, ybase+25);
+		
+		fill(color(255, 0, 255));
+		ellipse(xbase+35, ybase+50, 12, 12);
+		fill(color(0, 0, 255));
+		ellipse(xbase+35, ybase+70, 12, 12);
+		fill(color(255, 255, 0));
+		ellipse(xbase+35, ybase+90, 12, 12);
+		fill(color(255, 0, 0));
+		ellipse(xbase+35, ybase+110, 12, 12);
+		
+		textAlign(LEFT, CENTER);
+		fill(0, 0, 0);
+		text("routes = 0", xbase+50, ybase+50);
+		text("routes <= 100", xbase+50, ybase+70);
+		text("100 < routes <= 500", xbase+50, ybase+90);
+		text("routes > 500", xbase+50, ybase+110);
+		text("Size ~ Number of routes", xbase+25, ybase+130);
+		
+		text("Route distance (km)", xbase+25, ybase+170);
+		stroke(255, 0, 255);
+		line(xbase+15, ybase+190, xbase+45, ybase+190);
+		stroke(0, 0, 255);
+		line(xbase+15, ybase+210, xbase+45, ybase+210);
+		stroke(255, 255, 0);
+		line(xbase+15, ybase+230, xbase+45, ybase+230);
+		stroke(255, 0, 0);
+		line(xbase+15, ybase+250, xbase+45, ybase+250);
+		
+		text("distance <= 500km", xbase+50, ybase+190);
+		text("500km < distance <= 1000km", xbase+50, ybase+210);
+		text("1000km < distance <= 4000km", xbase+50, ybase+230);
+		text("distance > 4000km", xbase+50, ybase+250);
+		
+		text("s key:", xbase+15, ybase+280);
+		String toggle = "";
+		if (showConnectionMarkers) {
+			toggle = "Showing airport markers for all route connections to clicked airport...";
+		} else {
+			toggle = "Show clicked airport marker only...";
 		}
-
+		
+		text(toggle, xbase+45, ybase+150, xbase+100, ybase+290);
+	}
 }
