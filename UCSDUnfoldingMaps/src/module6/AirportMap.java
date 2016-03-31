@@ -11,7 +11,6 @@ import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.data.ShapeFeature;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.SimpleLinesMarker;
-import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import de.fhpotsdam.unfolding.geo.Location;
 import parsing.ParseFeed;
@@ -24,11 +23,6 @@ import processing.core.PApplet;
  *
  */
 
-//Features to add: Size of airport marker - number of routes
-//Click on airport - show airport routes
-//Color of route = distance of travel
-//City markers
-//Click on city - show airports nearby
 public class AirportMap extends PApplet {
 	
 	UnfoldingMap map;
@@ -44,7 +38,7 @@ public class AirportMap extends PApplet {
 		size(1280, 800, OPENGL);
 		
 		// setting up map and default events
-		map = new UnfoldingMap(this, 200, 50, 850, 650);
+		map = new UnfoldingMap(this, 400, 50, 1200, 700);
 		MapUtils.createDefaultEventDispatcher(this, map);
 		
 		// get features from airport data
@@ -84,7 +78,20 @@ public class AirportMap extends PApplet {
 				route.addLocation(airports.get(dest));
 			}
 			
-			SimpleLinesMarker sl = new SimpleLinesMarker(route.getLocations(), route.getProperties());
+			List<Location> locs = route.getLocations();
+			double dist = locs.get(0).getDistance(locs.get(1)) * 1.52;
+			
+			SimpleLinesMarker sl = new SimpleLinesMarker(locs, route.getProperties());
+
+			if (dist <= 500.0) {
+				sl.setColor(color(255, 0, 255));
+			} else if (dist > 500.0 && dist <= 1000.0) {
+				sl.setColor(color(0, 0, 255));
+			} else if (dist > 1000.0 && dist <= 4000.0) {
+				sl.setColor(color(255, 255, 0));
+			} else {
+				sl.setColor(color(255, 0, 0));
+			}
 		
 			//System.out.println(sl.getProperties());
 			
@@ -105,7 +112,7 @@ public class AirportMap extends PApplet {
 	}
 	
 	public void draw() {
-		background(200);
+		background(0);
 		map.draw();
 		addKey();
 		
@@ -176,10 +183,6 @@ public class AirportMap extends PApplet {
 				lastClicked = (CommonMarker)marker;
 				for (Marker sl : ((AirportMarker)lastClicked).routes) {
 					sl.setHidden(false);
-					//int source = Integer.parseInt((String)sl.getProperty("source"));
-					//int dest = Integer.parseInt((String)sl.getProperty("destination"));
-					//notHiddenAirportMarker.add(airportsRoutes.get(source));
-					//notHiddenAirportMarker.add(airportsRoutes.get(dest));
 				}
 				for (Marker mk : airportList) {
 					if (mk != lastClicked) {
@@ -191,51 +194,51 @@ public class AirportMap extends PApplet {
 		}
 	}
 	
-	private void addKey() {	
-		// Remember you can use Processing's graphics methods here
-		fill(200);
-		
-		int xbase = 20;
-		int ybase = 20;
-		
-		rect(xbase, ybase, 150, 200);
-		
-		fill(0);
-		textAlign(LEFT, CENTER);
-		textSize(12);
-		text("Airport Key", xbase+13, ybase+13);
-		
-		fill(204, 255, 255);
-		stroke(204, 255, 255);
-		ellipse(xbase+8, 
-				ybase+52, 
-				3, 
-				3);
-		
-		fill(0, 153, 153);
-		stroke(0, 153, 153);
-		ellipse(xbase+8, 
-				ybase+82, 
-				3, 
-				3);
-		
-		fill(0, 51, 51);
-		stroke(0, 51, 51);
-		ellipse(xbase+8, 
-				ybase+112, 
-				3, 
-				3);
-
-		fill(0, 0, 0);
-		textAlign(LEFT, CENTER);
-		textSize(11);
-		text("Airport with less than", xbase+20, ybase+50);
-		text("10 routes", xbase+20, ybase+65);
-		text("Airport with more than", xbase+20, ybase+80);
-		text("10, less than 30 routes", xbase+20, ybase+95);
-		text("Airport with more than", xbase+20, ybase+110);
-		text("30 routes", xbase+20, ybase+125);
-		
-	}
+	// helper method to draw key in GUI
+		private void addKey() {	
+			fill(255, 250, 240);
+			
+			int xbase = 50;
+			int ybase = 50;
+			
+			rect(xbase, ybase, 250, 400);
+			
+			fill(0);
+			textAlign(LEFT, CENTER);
+			textSize(12);
+			text("Airport/Route Key", xbase+25, ybase+25);
+			
+			fill(color(255, 0, 255));
+			ellipse(xbase+35, ybase+50, 12, 12);
+			fill(color(0, 0, 255));
+			ellipse(xbase+35, ybase+70, 12, 12);
+			fill(color(255, 255, 0));
+			ellipse(xbase+35, ybase+90, 12, 12);
+			fill(color(255, 0, 0));
+			ellipse(xbase+35, ybase+110, 12, 12);
+			
+			textAlign(LEFT, CENTER);
+			fill(0, 0, 0);
+			text("routes = 0", xbase+50, ybase+50);
+			text("routes <= 100", xbase+50, ybase+70);
+			text("100 < routes <= 500", xbase+50, ybase+90);
+			text("routes > 500", xbase+50, ybase+110);
+			text("Size ~ Number of routes", xbase+25, ybase+130);
+			
+			text("Route distance (km)", xbase+25, ybase+170);
+			stroke(255, 0, 255);
+			line(xbase+15, ybase+190, xbase+45, ybase+190);
+			stroke(0, 0, 255);
+			line(xbase+15, ybase+210, xbase+45, ybase+210);
+			stroke(255, 255, 0);
+			line(xbase+15, ybase+230, xbase+45, ybase+230);
+			stroke(255, 0, 0);
+			line(xbase+15, ybase+250, xbase+45, ybase+250);
+			
+			text("distance <= 500km", xbase+50, ybase+190);
+			text("500km < distance <= 1000km", xbase+50, ybase+210);
+			text("1000km < distance <= 4000km", xbase+50, ybase+230);
+			text("distance > 4000km", xbase+50, ybase+250);
+		}
 
 }

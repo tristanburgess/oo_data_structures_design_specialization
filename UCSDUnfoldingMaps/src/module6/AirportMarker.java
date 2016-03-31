@@ -27,19 +27,22 @@ public class AirportMarker extends CommonMarker {
 	@Override
 	public void drawMarker(PGraphics pg, float x, float y) {
 		int outRoutes = routes.size();
-		if (outRoutes < 10) {
-			pg.fill(204, 255, 255);
-			pg.stroke(204, 255, 255);
-		} else if (outRoutes > 30) {
-			pg.fill(0, 51, 51);
-			pg.stroke(0, 51, 51);
+		if (outRoutes == 0) {
+			pg.fill(255, 0, 255);
+		} else if (outRoutes >= 500) {
+			pg.fill(255, 0, 0);
+		} else if (outRoutes <= 100) {
+			pg.fill(0, 0, 255);
 		} else {
-			pg.fill(0, 153, 153);
-			pg.stroke(0, 153, 153);
+			pg.fill(255, 255, 0);
+		}
+		
+		if (outRoutes == 0) {
+			this.setRadius(3.0f);
+		} else {
+			this.setRadius(0.1f * routes.size());
 		}
 		pg.ellipse(x, y, radius, radius);
-		
-		
 	}
 
 	@Override
@@ -72,8 +75,6 @@ public class AirportMarker extends CommonMarker {
 	
 	public void addRoute(SimpleLinesMarker sl) {
 		routes.add(sl);
-		this.setRadius(0.05f * routes.size());
-		System.out.println(routes.size());
 	}
 	
 	public String getName() {
