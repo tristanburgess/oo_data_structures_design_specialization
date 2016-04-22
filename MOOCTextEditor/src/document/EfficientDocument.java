@@ -45,6 +45,18 @@ public class EfficientDocument extends Document {
 		
 		// TODO: Finish this method.  Remember the countSyllables method from 
 		// Document.  That will come in handy here.
+		for (String token : tokens) {
+			if (isWord(token)) {
+				this.numWords++;
+				this.numSyllables += countSyllables(token);
+			} else {
+				this.numSentences++;
+			}
+		}
+		
+		if (!tokens.isEmpty() && isWord(tokens.get(tokens.size() - 1))) {
+			this.numSentences++;
+		}
 	}
 	
 	
@@ -58,7 +70,7 @@ public class EfficientDocument extends Document {
 	@Override
 	public int getNumWords() {
 		//TODO: write this method.  Hint: It's simple
-	    return 0;
+	    return this.numWords;
 	}
 
 	/**
@@ -72,7 +84,7 @@ public class EfficientDocument extends Document {
 	@Override
 	public int getNumSentences() {
         //TODO: write this method.  Hint: It's simple
-        return 0;
+        return this.numSentences;
 	}
 
 	/**
@@ -86,7 +98,7 @@ public class EfficientDocument extends Document {
 	@Override
 	public int getNumSyllables() {
         //TODO: write this method.  Hint: It's simple
-        return 0;
+        return this.numSyllables;
 	}
 	
 	// Can be used for testing

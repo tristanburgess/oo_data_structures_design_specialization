@@ -42,6 +42,26 @@ public abstract class Document {
 		return tokens;
 	}
 	
+	/** Returns the tokens that match the regex pattern from the word text string
+	 * @param pattern A regular expression string specifying the 
+	 *   token pattern desired
+	 *   @param word A string representing the word whose syllables we are counting
+	 * @return A List of tokens from the word text that match the regex 
+	 *   pattern
+	 */
+	protected List<String> getTokens(String pattern, String word)
+	{
+		ArrayList<String> tokens = new ArrayList<String>();
+		Pattern tokSplitter = Pattern.compile(pattern);
+		Matcher m = tokSplitter.matcher(word);
+		
+		while (m.find()) {
+			tokens.add(m.group());
+		}
+		
+		return tokens;
+	}
+	
 	// This is a helper function that returns the number of syllables
 	// in a word.  You should write this and use it in your 
 	// BasicDocument class.
@@ -50,10 +70,16 @@ public abstract class Document {
 	// next week when we implement the EfficientDocument class.
 	protected int countSyllables(String word)
 	{
-		// TODO: Implement this method so that you can call it from the 
-	    // getNumSyllables method in BasicDocument (module 1) and 
-	    // EfficientDocument (module 2).
-	    return 0;
+		// Matches either contiguous sequences of vowels a e i o u and y, where the word does not end with e
+		// For the end, match a i o u and y
+		int matchedSyllableDelimiters = getTokens("[aeiouyAEIOUY]+(?<!e$)|[aiouyAEIOUY]", word).size();
+		
+		if (matchedSyllableDelimiters == 0) {
+			// The whole thing is one syllable
+			return 1;
+		} 
+		
+		return matchedSyllableDelimiters;
 	}
 	
 	/** A method for testing
@@ -76,16 +102,22 @@ public abstract class Document {
 			System.out.println("\nIncorrect number of syllables.  Found " + syllFound 
 					+ ", expected " + syllables);
 			passed = false;
+		} else {
+			System.out.println("\nCorrect number of syllables.  Found " + syllFound);
 		}
 		if (wordsFound != words) {
 			System.out.println("\nIncorrect number of words.  Found " + wordsFound 
 					+ ", expected " + words);
 			passed = false;
+		} else {
+			System.out.println("\nCorrect number of words.  Found " + wordsFound);
 		}
 		if (sentFound != sentences) {
 			System.out.println("\nIncorrect number of sentences.  Found " + sentFound 
 					+ ", expected " + sentences);
 			passed = false;
+		} else {
+			System.out.println("\nCorrect number of sentences.  Found " + sentFound);
 		}
 		
 		if (passed) {
@@ -116,10 +148,7 @@ public abstract class Document {
 	/** return the Flesch readability score of this document */
 	public double getFleschScore()
 	{
-	    // TODO: Implement this method
-	    return 0.0;
+	    return 206.835 - 1.015 * ((double)getNumWords() / getNumSentences()) - 84.6 * ((double)getNumSyllables() / getNumWords());
 	}
-	
-	
 	
 }

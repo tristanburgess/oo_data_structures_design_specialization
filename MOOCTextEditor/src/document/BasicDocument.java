@@ -28,9 +28,7 @@ public class BasicDocument extends Document
 	@Override
 	public int getNumWords()
 	{
-		//TODO: Implement this method.  See the Module 1 support videos 
-	    // if you need help.
-	    return 0;
+		return getTokens("[a-z|A-z]+").size();
 	}
 	
 	/**
@@ -44,9 +42,7 @@ public class BasicDocument extends Document
 	@Override
 	public int getNumSentences()
 	{
-	    //TODO: Implement this method.  See the Module 1 support videos 
-        // if you need help.
-        return 0;
+		return getTokens("[\\w,;']+[\\.\\?!]+|[\\w]+$").size();
 	}
 	
 	/**
@@ -60,9 +56,14 @@ public class BasicDocument extends Document
 	@Override
 	public int getNumSyllables()
 	{
-	    //TODO: Implement this method.  See the Module 1 support videos 
-        // if you need help.
-        return 0;
+	    List<String> wordTokens = getTokens("[a-z|A-z]+");
+	    int docSyllables = 0;
+	    
+	    for (String word : wordTokens) {
+	    	docSyllables += countSyllables(word);
+	    }
+	    
+	    return docSyllables;
 	}
 	
 	
@@ -87,7 +88,13 @@ public class BasicDocument extends Document
 		testCase(new BasicDocument("Lorem ipsum dolor sit amet, qui ex choro quodsi moderatius, nam dolores explicari forensibus ad."),
 		         32, 15, 1);
 		
-		
+		// Tristan's test cases
+		testCase(new BasicDocument("eeeeeeeeeee. eeeeeeeeeeee"),
+		         2, 2, 2);
+		testCase(new BasicDocument("."),
+		         0, 0, 0);
+		testCase(new BasicDocument("Just how far could Republicans go to deny Donald Trump the party's nomination? A delegate to this summer's convention in Cleveland asserts that the GOP gathering could do anything it wants. Curly Haughland, a GOP national committeeman from North Dakota, told Morning Edition Thursday of his interpretation of party rules. Not for the first time, Haughland declared that party rules do not bind any delegate to vote for any particular candidate. He argues that even delegates who are 'pledged' to Trump or other contenders due to state primary results are, in reality, free to do as they like."),
+		         150, 198, 5);
 	}
 	
 }

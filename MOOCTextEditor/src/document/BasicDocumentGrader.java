@@ -8,8 +8,8 @@ import document.BasicDocument;
 
 public class BasicDocumentGrader {
     public static void main(String[] args) {
-        try
-        {
+
+        	/*
             System.out.println("Sentences, words, and syllables:");
             BufferedReader br = new BufferedReader(new FileReader("test_cases/mod1TestCases.txt"));
             String line;
@@ -17,8 +17,8 @@ public class BasicDocumentGrader {
             while ((line = br.readLine()) != null)
             {
                 BasicDocument doc = new BasicDocument(line);
-                String result = doc.getNumSentences() + " " + doc.getNumWords() + " " + doc.getNumSyllables() + " ";
-                System.out.print(result);
+                String result = "Sentences: " + doc.getNumSentences() + " Words: " + doc.getNumWords() + " Syllables: " + doc.getNumSyllables() + " ";
+                System.out.println(result);
                 out.print(result);
             }
             out.print("\n");
@@ -32,7 +32,7 @@ public class BasicDocumentGrader {
             {
                 BasicDocument doc = new BasicDocument(line);
                 String result = doc.getFleschScore() + " ";
-                System.out.print(result);
+                System.out.println(result);
                 out.print(result);
             }
             out.print("\n");
@@ -40,9 +40,10 @@ public class BasicDocumentGrader {
             System.out.print('\n');
             br.close();
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        */
+    	String text = "My ";
+    	String s2 = "String";
+    	text = text + s2;
+    	System.out.println(text);
     }
 }
