@@ -113,8 +113,6 @@ public class MyLinkedListTester {
 		assertEquals("Remove: check a is correct ", 65, a);
 		assertEquals("Remove: check element 0 is correct ", (Integer)21, list1.get(0));
 		assertEquals("Remove: check size is correct ", 2, list1.size());
-		
-		// TODO: Add more tests here
 	}
 	
 	/** Test adding an element into the end of the list, specifically
@@ -123,8 +121,9 @@ public class MyLinkedListTester {
 	@Test
 	public void testAddEnd()
 	{
-        // TODO: implement this test
-		
+		list1.add(5);
+		int a = list1.get(list1.size-1);
+		assertEquals("Remove: check a is correct ", 5, a);
 	}
 
 	
@@ -132,7 +131,10 @@ public class MyLinkedListTester {
 	@Test
 	public void testSize()
 	{
-		// TODO: implement this test
+		int before = list1.size;
+		list1.add(5);
+		int after = list1.size;
+		assertEquals("Remove: check a is correct ", before + 1, after);
 	}
 
 	
@@ -144,16 +146,19 @@ public class MyLinkedListTester {
 	@Test
 	public void testAddAtIndex()
 	{
-        // TODO: implement this test
-		
+		int prev = list1.get(2);
+		list1.add(2, 5);
+		int next = list1.get(2);
+		assertEquals("Remove: check a is correct ", 5, next);
+		int nextNext = list1.get(3);
+		assertEquals("Remove: check a is correct ", prev, nextNext);
 	}
 	
 	/** Test setting an element in the list */
 	@Test
 	public void testSet()
 	{
-	    // TODO: implement this test
-	    
+
 	}
 	
 	
