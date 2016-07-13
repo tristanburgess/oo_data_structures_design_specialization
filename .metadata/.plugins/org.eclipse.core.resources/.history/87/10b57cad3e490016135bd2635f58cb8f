@@ -69,12 +69,12 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	 */
 	public void add(int index, E element) 
 	{
-		if (element == null) {
-			throw new NullPointerException();
+		if (index >= size || index < 0) {
+			throw new IndexOutOfBoundsException();
 		}
 		
-		if (index != 0 && (index >= size || index < 0)) {
-			throw new IndexOutOfBoundsException();
+		if (element == null) {
+			throw new IllegalArgumentException();
 		}
 		
 		LLNode<E> newE = new LLNode<E>(element);
@@ -135,12 +135,12 @@ public class MyLinkedList<E> extends AbstractList<E> {
 	 */
 	public E set(int index, E element) 
 	{
-		if (element == null) {
-			throw new NullPointerException();
-		}
-		
 		if (index >= size || index < 0) {
 			throw new IndexOutOfBoundsException();
+		}
+		
+		if (element == null) {
+			throw new IllegalArgumentException();
 		}
 		
 		LLNode<E> toEdit = this.head;

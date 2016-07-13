@@ -169,36 +169,26 @@ public class MyLinkedListTester {
 	@Test
 	public void testAddAtIndex()
 	{
-		int testElem = 5;
-		
 		int prev = list1.get(2);
-		list1.add(2, testElem);
+		list1.add(2, 5);
 		int next = list1.get(2);
-		assertEquals("Remove: check a is correct ", testElem, next);
+		assertEquals("Remove: check a is correct ", 5, next);
 		int nextNext = list1.get(3);
 		assertEquals("Remove: check a is correct ", prev, nextNext);
 		
 		try {
-			longerList.add(-1, testElem);
-			fail("Add Idx 1: Check out of bounds");
+			longerList.remove(-1);
+			fail("Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {
 		
 		}
 		
 		try {
-			longerList.add(LONG_LIST_LENGTH + 1, testElem);
-			fail("Add Idx 2: Check out of bounds");
+			longerList.remove(LONG_LIST_LENGTH);
+			fail("Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {
-		
-		}
-		
-		try {
-			longerList.add(LONG_LIST_LENGTH - 1, null);
-			fail("Add Idx 3: Check null ptr");
-		}
-		catch (NullPointerException e) {
 		
 		}
 	}
@@ -209,11 +199,11 @@ public class MyLinkedListTester {
 	{
 		longerList.set(LONG_LIST_LENGTH - 1, 5);
 		int test = longerList.get(LONG_LIST_LENGTH - 1);
-		assertEquals("Set: test is correct ", 5, test);
+		assertEquals("Remove: check a is correct ", 5, test);
 		
 		try {
 			longerList.set(-1, 5);
-			fail("Set 1: Check out of bounds");
+			fail("Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {
 		
@@ -221,17 +211,9 @@ public class MyLinkedListTester {
 		
 		try {
 			longerList.set(LONG_LIST_LENGTH, 5);
-			fail("Set 2: Check out of bounds");
+			fail("Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {
-		
-		}
-		
-		try {
-			longerList.set(LONG_LIST_LENGTH - 1, null);
-			fail("Set 3: Check null ptr");
-		}
-		catch (NullPointerException e) {
 		
 		}
 	}

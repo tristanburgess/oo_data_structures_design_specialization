@@ -187,7 +187,7 @@ public class MyLinkedListTester {
 		}
 		
 		try {
-			longerList.add(LONG_LIST_LENGTH + 1, testElem);
+			longerList.add(LONG_LIST_LENGTH, testElem);
 			fail("Add Idx 2: Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {

@@ -180,15 +180,15 @@ public class MyLinkedListTester {
 		
 		try {
 			longerList.add(-1, testElem);
-			fail("Add Idx 1: Check out of bounds");
+			fail("Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {
 		
 		}
 		
 		try {
-			longerList.add(LONG_LIST_LENGTH + 1, testElem);
-			fail("Add Idx 2: Check out of bounds");
+			longerList.add(LONG_LIST_LENGTH, testElem);
+			fail("Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {
 		
@@ -196,7 +196,7 @@ public class MyLinkedListTester {
 		
 		try {
 			longerList.add(LONG_LIST_LENGTH - 1, null);
-			fail("Add Idx 3: Check null ptr");
+			fail("Check out of bounds");
 		}
 		catch (NullPointerException e) {
 		
@@ -213,7 +213,7 @@ public class MyLinkedListTester {
 		
 		try {
 			longerList.set(-1, 5);
-			fail("Set 1: Check out of bounds");
+			fail("Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {
 		
@@ -221,7 +221,7 @@ public class MyLinkedListTester {
 		
 		try {
 			longerList.set(LONG_LIST_LENGTH, 5);
-			fail("Set 2: Check out of bounds");
+			fail("Check out of bounds");
 		}
 		catch (IndexOutOfBoundsException e) {
 		
@@ -229,7 +229,7 @@ public class MyLinkedListTester {
 		
 		try {
 			longerList.set(LONG_LIST_LENGTH - 1, null);
-			fail("Set 3: Check null ptr");
+			fail("Check out of bounds");
 		}
 		catch (NullPointerException e) {
 		
