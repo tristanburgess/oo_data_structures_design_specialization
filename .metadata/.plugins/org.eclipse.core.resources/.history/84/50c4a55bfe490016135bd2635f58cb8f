@@ -32,6 +32,8 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	public void train(String sourceText)
 	{
 		if (sourceText == "") {
+			ListNode wordNode = new ListNode("");
+			this.wordList.add(wordNode);
 			return;
 		}
 		

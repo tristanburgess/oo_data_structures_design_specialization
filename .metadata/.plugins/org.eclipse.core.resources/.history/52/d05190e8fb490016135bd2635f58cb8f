@@ -89,6 +89,7 @@ public class MarkovTextGeneratorGrader {
             feedback += "\nTests complete. Make sure everything looks right.";
 
             System.out.println(feedback);
+            f.close();
             return;
         } catch (Exception e) {
             System.out.println("Error during runtime: " + e);

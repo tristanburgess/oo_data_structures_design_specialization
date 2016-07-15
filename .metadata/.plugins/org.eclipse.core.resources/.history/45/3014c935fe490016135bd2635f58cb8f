@@ -32,6 +32,8 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	public void train(String sourceText)
 	{
 		if (sourceText == "") {
+			ListNode wordNode = new ListNode("");
+			this.wordList.add(wordNode);
 			return;
 		}
 		
@@ -69,16 +71,21 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	 */
 	@Override
 	public String generateText(int numWords) {
+		
 		if (this.wordList.size() == 0) {
-			return "";
+			throw new NullPointerException();
 		}
 		
 	    ListNode currWordNode = this.wordList.get(0);
 	    String out = "";
 	    
-	    for (int i = 0; i < numWords; ++i) {
-	    	out += currWordNode.getWord() + " ";
-	    	currWordNode = getWordNode(currWordNode.getRandomNextWord(this.rnGenerator));
+	    if (currWordNode.getWord() == "") {
+	    	return currWordNode.getWord();
+	    } else {
+		    for (int i = 0; i < numWords; ++i) {
+		    	out += currWordNode.getWord() + " ";
+		    	currWordNode = getWordNode(currWordNode.getRandomNextWord(this.rnGenerator));
+		    }
 	    }
 	    
 	    return out;

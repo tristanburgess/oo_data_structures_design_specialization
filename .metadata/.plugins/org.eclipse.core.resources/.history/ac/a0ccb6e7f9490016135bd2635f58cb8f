@@ -8,13 +8,12 @@ public class MarkovTextGeneratorGrader {
     private static final int LENGTH = 500;
 
     public static void main(String[] args) {
-        String feedback = "";
-        
         try {
             MarkovTextGenerator gen = new MarkovTextGeneratorLoL(new Random());
             
             int incorrect = 0;
             int tests = 0;
+            String feedback = "";
 
             feedback += "\n** Test 1: Generating text before training...";
             try {
@@ -88,7 +87,9 @@ public class MarkovTextGeneratorGrader {
 
             feedback += "\nTests complete. Make sure everything looks right.";
 
-            System.out.println(feedback);
+            PrintWriter f = new PrintWriter("grader_output/module3.part2.out");
+            f.println(feedback);
+            f.close();
             return;
         } catch (Exception e) {
             System.out.println("Error during runtime: " + e);

@@ -31,16 +31,14 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	@Override
 	public void train(String sourceText)
 	{
-		if (sourceText == "") {
-			return;
-		}
-		
 		ArrayList<String> words = new ArrayList<String>();
 		Pattern tokSplitter = Pattern.compile("[!?.]+|[a-zA-Z]+");
 		Matcher m = tokSplitter.matcher(sourceText);
 		
 		while (m.find()) {
-			words.add(m.group());
+			if (!(m.group().indexOf("!") >=0 || m.group().indexOf(".") >=0 || m.group().indexOf("?")>=0)) {
+				words.add(m.group());
+			}
 		}
 				
 		for (int i = 0; i < words.size(); ++i) {
@@ -69,13 +67,13 @@ public class MarkovTextGeneratorLoL implements MarkovTextGenerator {
 	 */
 	@Override
 	public String generateText(int numWords) {
+		
 		if (this.wordList.size() == 0) {
-			return "";
+			throw new NullPointerException();
 		}
 		
 	    ListNode currWordNode = this.wordList.get(0);
 	    String out = "";
-	    
 	    for (int i = 0; i < numWords; ++i) {
 	    	out += currWordNode.getWord() + " ";
 	    	currWordNode = getWordNode(currWordNode.getRandomNextWord(this.rnGenerator));
