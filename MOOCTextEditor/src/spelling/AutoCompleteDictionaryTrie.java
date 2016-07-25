@@ -29,8 +29,24 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean addWord(String word)
 	{
 		word = word.toLowerCase();
+		
+		TrieNode cur = this.root;
+		
+    	for (int i = 0; i < word.length(); ++i) {
+    		if (cur.getChild(word.charAt(i)) == null) {
+    			cur = cur.insert(word.charAt(i));
+    		} else {
+    			cur = cur.getChild(word.charAt(i));
+    		}
+    	}
     	
-    	return false;
+    	if (cur.endsWord()) {
+    		return false;
+    	}
+   
+    	cur.setEndsWord(true);
+    	this.size++;
+    	return true;
 	}
 	
 	/** 
@@ -48,8 +64,20 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean isWord(String s) 
 	{
 		s = s.toLowerCase();
-		return true;
+		
+		TrieNode cur = root;
+		
+		for (int i = 0; i < s.length(); ++i){
+			if (!cur.getValidNextCharacters().contains(s.charAt(i))){
+				return false;
+			}
+			
+			cur = cur.getChild(s.charAt(i));
+		}
+		
+		return cur.endsWord() && cur.getText().equals(s);
 	}
+	
 
 	/** 
 	 *  * Returns up to the n "best" predictions, including the word itself,
@@ -76,7 +104,40 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     	 //       Add all of its child nodes to the back of the queue
     	 // Return the list of completions
     	 
-         return null;
+         List<String> out = new LinkedList<String>();
+         
+         if (numCompletions < 1) {
+        	 return out;
+         }
+         
+         TrieNode cur = this.root;
+         
+         for (int i = 0; i < prefix.length(); ++i) {
+        	 if (!cur.getValidNextCharacters().contains(prefix.charAt(i))) {
+ 				return out;
+			 }
+        	 
+        	 cur = cur.getChild(prefix.charAt(i));
+         }
+         
+         LinkedList<TrieNode> trieQ = new LinkedList<TrieNode>();
+         trieQ.addLast(cur);
+         
+         while (!trieQ.isEmpty() && numCompletions > 0) {
+        	 TrieNode candidateWord = trieQ.removeFirst();
+        	 
+        	 if (candidateWord.endsWord()) {
+        		 out.add(candidateWord.getText());
+            	 numCompletions--;
+        	 }
+        	 
+        	 Set<Character> childKeySet = candidateWord.getValidNextCharacters();
+        	 for (Character c : childKeySet) {
+        		 trieQ.add(candidateWord.getChild(c));
+        	 }
+         }
+         
+         return out;    
      }
 
  	// For debugging
