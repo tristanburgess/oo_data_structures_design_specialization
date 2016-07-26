@@ -1,14 +1,14 @@
-/**
- * @author UCSD MOOC development team and YOU
- * 
- * A class which reprsents a graph of geographic locations
- * Nodes in the graph are intersections between 
- *
- */
 package roadgraph;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -16,22 +16,25 @@ import geography.GeographicPoint;
 import util.GraphLoader;
 
 /**
- * @author UCSD MOOC development team and YOU
+ * @author Tristan Burgess
  * 
  * A class which represents a graph of geographic locations
  * Nodes in the graph are intersections between 
  *
  */
 public class MapGraph {
-	//TODO: Add your member variables here in WEEK 2
-	
+	private int numVertices;
+	private int numEdges;
+	private Map<GeographicPoint, ArrayList<GraphEdge>> adjListMap;
 	
 	/** 
 	 * Create a new empty MapGraph 
 	 */
 	public MapGraph()
 	{
-		// TODO: Implement in this constructor in WEEK 2
+		numVertices = 0;
+		numEdges = 0;
+		adjListMap = new HashMap<GeographicPoint, ArrayList<GraphEdge>>();
 	}
 	
 	/**
@@ -40,18 +43,7 @@ public class MapGraph {
 	 */
 	public int getNumVertices()
 	{
-		//TODO: Implement this method in WEEK 2
-		return 0;
-	}
-	
-	/**
-	 * Return the intersections, which are the vertices in this graph.
-	 * @return The vertices in this graph as GeographicPoints
-	 */
-	public Set<GeographicPoint> getVertices()
-	{
-		//TODO: Implement this method in WEEK 2
-		return null;
+		return numVertices;
 	}
 	
 	/**
@@ -60,12 +52,18 @@ public class MapGraph {
 	 */
 	public int getNumEdges()
 	{
-		//TODO: Implement this method in WEEK 2
-		return 0;
+		return numEdges;
+	}
+	
+	/**
+	 * Return the intersections, which are the vertices in this graph.
+	 * @return The vertices in this graph as GeographicPoints
+	 */
+	public Set<GeographicPoint> getVertices()
+	{
+		return new HashSet<GeographicPoint>(adjListMap.keySet());
 	}
 
-	
-	
 	/** Add a node corresponding to an intersection at a Geographic Point
 	 * If the location is already in the graph or null, this method does 
 	 * not change the graph.
@@ -74,8 +72,14 @@ public class MapGraph {
 	 * was already in the graph, or the parameter is null).
 	 */
 	public boolean addVertex(GeographicPoint location)
-	{
-		// TODO: Implement this method in WEEK 2
+	{	
+		if (getVertices().add(location)) {
+			ArrayList<GraphEdge> edgeList = new ArrayList<GraphEdge>();
+			adjListMap.put(location,  edgeList);
+			numVertices++;
+			return true;
+		}
+		
 		return false;
 	}
 	
@@ -92,12 +96,18 @@ public class MapGraph {
 	 *   or if the length is less than 0.
 	 */
 	public void addEdge(GeographicPoint from, GeographicPoint to, String roadName,
-			String roadType, double length) throws IllegalArgumentException {
+			String roadType, double length) throws IllegalArgumentException 
+	{
 
-		//TODO: Implement this method in WEEK 2
+		if (!getVertices().contains(from) || !getVertices().contains(to) || 
+		    roadName == null || roadType == null || length < 0) {
+			throw new IllegalArgumentException();
+		}
 		
+		GraphEdge edge = new GraphEdge(to, roadName, roadType, length);
+		adjListMap.get(from).add(edge);
+		numEdges++;
 	}
-	
 
 	/** Find the path from start to goal using breadth first search
 	 * 
@@ -106,7 +116,8 @@ public class MapGraph {
 	 * @return The list of intersections that form the shortest (unweighted)
 	 *   path from start to goal (including both start and goal).
 	 */
-	public List<GeographicPoint> bfs(GeographicPoint start, GeographicPoint goal) {
+	public List<GeographicPoint> bfs(GeographicPoint start, GeographicPoint goal) 
+	{
 		// Dummy variable for calling the search algorithms
         Consumer<GeographicPoint> temp = (x) -> {};
         return bfs(start, goal, temp);
@@ -122,15 +133,65 @@ public class MapGraph {
 	 */
 	public List<GeographicPoint> bfs(GeographicPoint start, 
 			 					     GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
-	{
-		// TODO: Implement this method in WEEK 2
-		
+	{		
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
 
+		Queue<GeographicPoint> q = new LinkedList<GeographicPoint>();
+		Set<GeographicPoint> visited = new HashSet<GeographicPoint>();
+		Map<GeographicPoint, GeographicPoint> parent = new HashMap<GeographicPoint, GeographicPoint>();
+		
+		q.add(start);
+		visited.add(start);
+		
+		
+		while (!q.isEmpty()) {
+			GeographicPoint cur = q.remove();
+			
+			if (cur.equals(goal)) {
+				return buildPath(start, goal, parent);
+			}
+			
+			List<GraphEdge> outEdges = adjListMap.get(cur);
+			
+			for (GraphEdge edgeToNeighbor : outEdges) {
+				GeographicPoint n = edgeToNeighbor.getDestNode();
+				if (!visited.contains(n)) {
+					q.add(n);
+					visited.add(n);
+					parent.put(n, cur);
+				}
+			}
+			
+		}
+		
 		return null;
 	}
 	
+	/** Takes a map of vertices and their parent from BFS and converts to a list
+	 * showing the optimal shortest path from start to goal node.
+	 * 
+	 * @param start The starting location
+	 * @param goal The goal location
+	 * @param parent Map of vertices found by BFS and their parent
+	 * @return A list of Geographic points representing the optimal shortest path
+	 */
+	private List<GeographicPoint> buildPath(GeographicPoint start, GeographicPoint goal, 
+			Map<GeographicPoint, GeographicPoint> parent) 
+	{
+		List<GeographicPoint> path = new ArrayList<GeographicPoint>();
+		GeographicPoint cur = goal;
+		
+		while (cur != start){
+			path.add(cur);
+            cur = parent.get(cur);
+        }
+		
+		path.add(start);
+		
+		Collections.reverse(path);
+		return path;
+	}
 
 	/** Find the path from start to goal using Dijkstra's algorithm
 	 * 
@@ -139,7 +200,8 @@ public class MapGraph {
 	 * @return The list of intersections that form the shortest path from 
 	 *   start to goal (including both start and goal).
 	 */
-	public List<GeographicPoint> dijkstra(GeographicPoint start, GeographicPoint goal) {
+	public List<GeographicPoint> dijkstra(GeographicPoint start, GeographicPoint goal) 
+	{
 		// Dummy variable for calling the search algorithms
 		// You do not need to change this method.
         Consumer<GeographicPoint> temp = (x) -> {};
@@ -172,7 +234,8 @@ public class MapGraph {
 	 * @return The list of intersections that form the shortest path from 
 	 *   start to goal (including both start and goal).
 	 */
-	public List<GeographicPoint> aStarSearch(GeographicPoint start, GeographicPoint goal) {
+	public List<GeographicPoint> aStarSearch(GeographicPoint start, GeographicPoint goal) 
+	{
 		// Dummy variable for calling the search algorithms
         Consumer<GeographicPoint> temp = (x) -> {};
         return aStarSearch(start, goal, temp);
