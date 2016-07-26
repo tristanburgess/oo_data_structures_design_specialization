@@ -95,6 +95,21 @@ public class GraphAdjMatrix extends Graph {
 		return inNeighbors;
 	}
 	
+	// return c = a * b
+    public int[][] mul(int[][] a, int[][] b) {
+        int m1 = a.length;
+        int n1 = a[0].length;
+        int m2 = b.length;
+        int n2 = b[0].length;
+        if (n1 != m2) throw new RuntimeException("Illegal matrix dimensions.");
+        int[][] c = new int[m1][n2];
+        for (int i = 0; i < m1; i++)
+            for (int j = 0; j < n2; j++)
+                for (int k = 0; k < n1; k++)
+                    c[i][j] += a[i][k] * b[k][j];
+        return c;
+    }
+	
 	/** 
 	 * Implement the abstract method for finding all 
 	 * vertices reachable by two hops from v.
@@ -104,8 +119,23 @@ public class GraphAdjMatrix extends Graph {
 	 * @return List<Integer> a list of indices of vertices.  
 	 */	
 	public List<Integer> getDistance2(int v) {
-		// XXX Implement this method in week 1
-		return null;
+		List<Integer> neighbors2 = new ArrayList<>();
+		int N = getNumVertices();
+		
+		for (int i = 0; i < N; ++i) {
+			int counter = 0;
+			
+			for (int j = 0; j < N; ++j) {
+				counter += (adjMatrix[v][j] * adjMatrix[j][i]);
+			}
+			
+			while (counter-- > 0) {
+				neighbors2.add(i);
+			}
+			
+		}
+		
+		return neighbors2;
 	}
 	
 	/**
